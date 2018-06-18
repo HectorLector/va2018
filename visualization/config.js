@@ -40,5 +40,13 @@ var visConfig = {
             "field" : "image_size",
             "channel" : "image_size"
         },
+        {
+            "field" : "key",
+            "channel" : "key"
+        },
+        {
+            "field" : "value",
+            "channel" : "value"
+        },
     ]
 };

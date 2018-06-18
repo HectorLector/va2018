@@ -71,6 +71,8 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	let indexTf = channelMappings.findIndex(elem => (elem.channel === "tf"));
 	let indexTfidf = channelMappings.findIndex(elem => (elem.channel === "tfidf"));
 	let indexImageSize = channelMappings.findIndex(elem => (elem.channel === "image_size"));
+    let indexKey = channelMappings.findIndex(elem => (elem.channel === "key"));
+    let indexValue = channelMappings.findIndex(elem => (elem.channel === "value"));
 
 	let documentName = datarows[0][indexDoc];
 
@@ -86,6 +88,7 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	let firstPart = docMap.values().next().value
 	//Get images from first document, filter null values (no image), order by size (max to min), select biggest size and get data
 	let image1 = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];})[0][indexImage];
+    let meta_data = firstPart.filter(x => x[indexKey] != null).map(x => x[indexKey] + ":" + x[indexValue]).join(", ");
 	console.log(image1);
     
 	var svg = d3.select("body")
@@ -95,8 +98,9 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 			
 	var tip = d3.tip()
 	.attr('class', 'd3-tip')
+    .direction('s')
 	.html(function(d) {
-	  return "<strong>FOUND:</strong> <span style='color:red'>" + datarows[0][33] + "</span>";
+	  return "<strong>INFO:</strong> <span style='color:red'>" + meta_data + "</span>";
 	});
 	
 	var tip1 = d3.tip()
@@ -119,7 +123,9 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	        .attr("x", width/2)
 			.attr("font-size", "20px")
 	        .attr("y", 20)
-			.attr("text-anchor", "middle");		
+			.attr("text-anchor", "middle")
+		.on('mouseover', tip.show)
+		.on('mouseout', tip.hide);
 	
 	var term1 = svg.selectAll("text.term1")
 		        .data([0])
