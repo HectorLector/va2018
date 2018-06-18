@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Workbench - Bar Chart</title>
+
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+	<script type="text/javascript" src="./libs/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="./libs/lodash.js"></script>
+	<script type="text/javascript" src="./libs/vis-charting.js"></script>
+
+	<script type="text/javascript" src="./config.js"></script>
+	<script type="text/javascript" src="./data/data.js"></script>
+	<script type="text/javascript" src="./js/script.js"></script>
+</head>
+<body>
+	<div id="control-buttons">
+		<button onClick="drawVisualization()">Draw Visualization</button>
+		<button onClick="fireRandomFilterEvent()">Fire Random Filter Event</button>
+		<button onClick="clearFilter()">Clear Filter</button>
+		<button onClick="fireRandomBrushEvent()">Fire Random Brush Event</button>
+		<button onClick="clearBrush()">Clear Brush</button>
+		
+		<div id="size-container">width: <input id="vis-width" type="number"> height: <input id="vis-height" type="number">  <button onclick="setSize();">Set Size</button></div>
+	</div>
+	<div id="visualization-space">
+		<iframe id="visualization-iframe" src="about:blank" frameborder="0" scrolling="no"></iframe>
+
+		
+	</div>
+</body>
+</html>

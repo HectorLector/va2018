@@ -1,0 +1,15 @@
+iframe {
+    margin-top: 10px;
+    width: 600px;
+    height: 450px;
+    border: 1px solid grey;
+}
+
+#size-container {
+    margin-left: 10px;
+    display: inline-block;
+}
+
+#size-container input {
+    width: 50px;
+}

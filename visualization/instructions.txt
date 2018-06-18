@@ -1,0 +1,182 @@
+NOTE: TO GET YOUR VISUALIZATION RUNNING PROPERLY ALSO IN VISUALIZER, ONLY DO YOUR CHANGES IN THE "visualization" FOLDER
+THE "css" AND "libs" FOLDER SHOULD BE USED FOR ALL STYLES AND LIBRARIES. ALL FILES SHOULD BE ADDED DIRECTLY TO THOSE
+FOLDERS WITHOUT CREATING ANY SUBFOLDERS
+ADDITIONALY AN ICON SHOULD BE PROVIDED AS A 256x256 PNG
+
+//------------------------------------------------------------------------------------------------------------------ //
+//---------------------------------------------------- PART ONE ---------------------------------------------------- //
+//----------------------------------- Getting the visualization to draw something -----------------------------------//
+//------------------------------------------------------------------------------------------------------------------ //
+
+1. Go to http://www.cagrimmett.com/til/2016/04/26/responsive-d3-bar-chart.html
+
+2. Download the dependencies for the visualization. In this case d3.v3.min.js
+   and put them in the visualization/libs folder
+
+3. Add the dependencies in config.js under libs after visualizerChartApi.js
+
+4. Create a css file and copy the contents in it. In this case it will be called style.css
+
+5. Add it to the config.js
+
+6. Configure the mapping of fields from the the data.js file to the channels of your visualization. Because a bar chart
+   will be added here, it has an x-Axis and a y-Axis. The names of your channels can be arbitrary and their main purpose
+   is to identify what field is supposed to go on which channel. In this example, the field "fieldname" was mapped to
+   the x-axis, because it contains categorical values (string) and the field "value" was mapped to the y-axis, because
+   it contains numerical values.
+
+7. Now copy the visualization code in the drawVisualization function in the main.js file
+
+8. To get the visualization to work, a few things have to be adapted.
+   8.1. First, the width and height are hardcoded. Because our visualization "lives" in an iframe, we can use the bodys
+   width and height to make the visualization responsive. So width and height were set to:
+
+   var width = document.body.offsetWidth - margin.left - margin.right;
+   var height = document.body.offsetHeight - margin.top - margin.bottom;
+
+   8.2 Second, we have to change the way the data is accessed. The data structure in which the data is contained is a
+       little bit different from the one where the visualization was downloaded. One thing to consider is
+       that we don't know the exact names of the fields, because different datasets will be used. The other is that
+       our received data structure (datarows) is actually a 2-dimensional array and not an array of objects. Therefore
+       we have to access the values over an index. To find out the exact indexes, it is possible to use the
+       channelMappings parameter and get the index of the channel.
+
+       let xIndex = channelMappings.findIndex(elem => (elem.channel === "x-axis"));
+       let yIndex = channelMappings.findIndex(elem => (elem.channel === "y-axis"));
+
+       after that the right values can be accessed with the indexes. In the next lines the x and y domain are set
+       correctly
+
+       xScale.domain(datarows.map(function(d) { return d[xIndex]; }));
+       yScale.domain([0, d3.max(datarows, function(d) { return d[yIndex]; })]);
+
+       basically, in this example, every time the attribute ".food" was accessed, it had to be changed to accessing the
+       field over the xIndex, like this [xIndex], same for ".quantity" and "[yIndex]"
+
+
+//------------------------------------------------------------------------------------------------------------------ //
+//---------------------------------------------------- PART TWO ---------------------------------------------------- //
+//--------------------------------------- Implementing the filtering mechanism --------------------------------------//
+//------------------------------------------------------------------------------------------------------------------ //
+
+1. To be able to easier find the elements in the visualization matching to the data, every bar in the visualization will
+   get additional attributes. To identify the correct values, the attributes will carry the names of the visual channels
+   Additionally, it will be preceded with the string "data-". This is due to the specification of HTML5 regarding custom
+   attributes.
+   Therefore, at the end of the svgContainer.selectAll(".bar").... statement, the code for appending the content of the
+   data will be added like this
+
+   svgContainer.selectAll(".bar")
+           .data(datarows)
+           .enter()
+           .append("rect")
+           .attr("class", "bar")
+           .attr("x", function(d) { return xScale(d[xIndex]); })
+           .attr("width", xScale.rangeBand())
+           .attr("y", function(d) { return yScale(d[yIndex]); })
+           .attr("height", function(d) { return height - yScale(d[yIndex]); })
+           .attr("data-x-axis", function(d) { return d[xIndex]; })        // NEW
+           .attr("data-y-axis", function(d) { return d[yIndex]; });       // NEW
+
+2. When the applyFilter function is called, the datarows which should be shown get passed. Every element in the
+   visualization which does not match the criteria should be hidden.
+   To achieve this, first all bars are hidden and then all the matching ones are displayed. The code can be found in the
+   applyFilter function.
+   For easier DOM manipulation jQuery was also added to the libraries.
+
+
+//------------------------------------------------------------------------------------------------------------------ //
+//---------------------------------------------------- PART TWO ---------------------------------------------------- //
+//------------------------------------- Implementing the brush update callback --------------------------------------//
+//------------------------------------------------------------------------------------------------------------------ //
+
+Before implementing the broadcasting of the brushing, we will first implement the update of the visualization when a
+brush is received. For that, we will first add a new class for the bars, which we will call "notselected". If a bar has
+the class "notselected" it will be grey.
+The appropriate css rule, which will be added to the style.css looks as follows:
+
+.bar.notselected {
+    fill: #DDDDDD;
+}
+
+The data passed by the brushUpdateCallback looks a bit different. It is an array of objects, where each object has the
+fieldNames as attributes, with the concrete values.
+Therefore, we will have to use the gaChannelMappings object again, to find out what field is mapped to which channel
+and that we can access the correct attribute.
+Brushing works a little bit different then filtering by rows. Usually, only categorical information is broadcasted via
+the brushingObserver. Therefore, we will only get the fieldNames and not the values associated with them. But it might
+be the case, were also the values are passed. The reason why only categories are compared is because visualizations can
+use different aggregation methods, which would hinder the brushing if the values are compared.
+The implementation of the brushUpdateCallback can be seen in the respective function in the visualization main.js file.
+
+//------------------------------------------------------------------------------------------------------------------ //
+//--------------------------------------------------- PART THREE---------------------------------------------------- //
+//---------------------------------------- Implementing the brush broadcast -----------------------------------------//
+//------------------------------------------------------------------------------------------------------------------ //
+
+Brushing in this case means, selecting bars of interest, to highlight them in other visualization. For that, first we
+have to be able to select bars. Therefore, we will attach to all the bars click handlers, which will call every time the
+update method of the brushingObserver, to update the other visualizations.
+Every time a bar is clicked a check has to be performed if currently all bars are active. If this is the case, then all
+bars get disabled and only the clicked one enabled.
+After the correct bars have been highlighted, the selection has to be broadcasted
+For that, the update method of the brushingObserver has to be called with the visIndex of the visualization and an array
+of objects which represent the current selection.
+For brushing, it is best to use only the categorical fields, therefore the values in the y-axis will be omitted.
+The array containing the objects might look like this:
+
+brushArray = [
+    {
+      "fieldName" : "A"
+    },
+    {
+      "fieldName" : "C"
+    },
+    {
+      "fieldName" : "F"
+    }
+]
+
+
+//------------------------------------------------------------------------------------------------------------------ //
+//--------------------------------------------------- PART FOUR ---------------------------------------------------- //
+//------------------------------------------ Uploading the visualization ------------------------------------------- //
+//------------------------------------------------------------------------------------------------------------------ //
+
+When all is done and the visualization is working as intended in the workbench, it is time to upload it to Visualizer
+and test it with the other available visualizations.
+For that, the contents of the "visualization" folder should be zipped. Only the contents and not the parent folder.
+Following that, you should log in to Visualizer, load a CSV file which should work with your visualization and proceed
+to the dashboard.
+After clicking on "Upload Visualization" in the Dashboard a dialog will pop up, which should be filled out.
+
+ - Visualization name - the name of the visualization which will be displayed as part of the title (arbitrary)
+ - Main filename - the name of the visualization main file which implements the visualization interface.
+                   In our case it is main.js
+ - Visualization - select here your zipped visualization
+ - Data aggregation mandatory - if this is not set, the data in visualizer will not be aggregated and passed directly
+                                without asking to choose an aggregation. This should generally be checked, but there are
+                                some cases where it does not have to be (example: Tag Cloud)
+ - Skip aggregation  - if checked, an option to skip the aggregation will be offered. Example: Parallel Coordinates
+ - Max datapoints without warning - After the max number of data points has been exceeded a warning will pop up before
+                                    creating the visualization. Otherwise it does not influence the behaviour of the
+                                    visualization.
+ - The channel area - The channel area describes every visualization channel. It is possible to add as many channels
+                      as the visualization needs with the '+' button. The bar chart demo visualization has 2 channels
+                      The configuration will look as follows:
+    1st channel area
+        Axis name: x-axis (should be the same as in your config.js)
+        Supported types: string, date, location
+        Necessity: mandatory (indicates if a channel HAS TO be set)
+        Occurence: one (there is only one x-axis)
+    2nd channel area
+        Axis name: y-axis (should be the same as in your config.js)
+        Supported types: string, date, location
+        Necessity: mandatory (indicates if a channel HAS TO be set)
+        Occurence: one (there is also only one y-axis)
+
+After everything has been filled out, hit upload and the visualization should be integrated in the vis picker
+NOTE: It is possible to upload MAX 3 visualizations as a user to the dashboard.
+
+
+

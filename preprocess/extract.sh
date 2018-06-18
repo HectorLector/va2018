@@ -13,6 +13,9 @@ do
 	
 	echo "Extracting images..."
 	pdfimages -png -p "$f" "$path"
+
+	echo "Extracting meta data..."
+	pdfinfo "$f" > "$path/info.txt"
 	
 	echo "Extracting text..."
 	pdftotext "$f" "$path/data.txt"

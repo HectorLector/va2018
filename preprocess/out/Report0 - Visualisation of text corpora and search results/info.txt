@@ -1,0 +1,13 @@
+Producer:       Skia/PDF m68
+Tagged:         no
+UserProperties: no
+Suspects:       no
+Form:           none
+JavaScript:     no
+Pages:          6
+Encrypted:      no
+Page size:      596 x 843 pts (A4)
+Page rot:       0
+File size:      330749 bytes
+Optimized:      yes
+PDF version:    1.5
