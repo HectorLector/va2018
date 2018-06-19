@@ -71,8 +71,8 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	let indexTf = channelMappings.findIndex(elem => (elem.channel === "tf"));
 	let indexTfidf = channelMappings.findIndex(elem => (elem.channel === "tfidf"));
 	let indexImageSize = channelMappings.findIndex(elem => (elem.channel === "image_size"));
-    let indexKey = channelMappings.findIndex(elem => (elem.channel === "key"));
-    let indexValue = channelMappings.findIndex(elem => (elem.channel === "value"));
+    	let indexKey = channelMappings.findIndex(elem => (elem.channel === "key"));
+    	let indexValue = channelMappings.findIndex(elem => (elem.channel === "value"));
 
 	let documentName = datarows[0][indexDoc];
 
@@ -88,7 +88,7 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	let firstPart = docMap.values().next().value
 	//Get images from first document, filter null values (no image), order by size (max to min), select biggest size and get data
 	let image1 = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];})[0][indexImage];
-    let meta_data = firstPart.filter(x => x[indexKey] != null).map(x => x[indexKey] + ":" + x[indexValue]).join(", ");
+    	let meta_data = firstPart.filter(x => x[indexKey] != null).map(x => x[indexKey] + ":" + x[indexValue]).join(", ");
 	console.log(image1);
     
 	var svg = d3.select("body")
@@ -97,19 +97,19 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 			.attr("height", height);
 			
 	var tip = d3.tip()
-	.attr('class', 'd3-tip')
-    .direction('s')
-	.html(function(d) {
-	  return "<strong>INFO:</strong> <span style='color:red'>" + meta_data + "</span>";
-	});
+		.attr('class', 'd3-tip')
+	    	.direction('s')
+		.html(function(d) {
+		  return "<strong>INFO:</strong> <span style='color:red'>" + meta_data + "</span>";
+		});
 	
 	var tip1 = d3.tip()
-	.attr('class', 'd3-tip')
-	.offset([10, 0])
-	.direction('s')
-	.html(function(d) {
-	  return "<strong style='color:red'>Entalten in:</strong> <span >" + datarows[0][3] + "</span>";
-	});
+		.attr('class', 'd3-tip')
+		.offset([10, 0])
+		.direction('s')
+		.html(function(d) {
+		  return "<strong style='color:red'>Entalten in:</strong> <span >" + datarows[0][3] + "</span>";
+		});
 	
 	svg.call(tip);
 	svg.call(tip1);
@@ -119,15 +119,24 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	        .enter()
 	        .append("text")
 	        .text(documentName)
-			.attr("class", "title")
+		.attr("class", "title")
 	        .attr("x", width/2)
-			.attr("font-size", "20px")
+		.attr("font-size", "20px")
 	        .attr("y", 20)
-			.attr("text-anchor", "middle")
-		.on('mouseover', tip.show)
-		.on('mouseout', tip.hide);
+		.attr("text-anchor", "middle")
+	.on('mouseover', tip.show)
+	.on('mouseout', tip.hide);
 	
-	var term1 = svg.selectAll("text.term1")
+	var cloud = svg.selectAll("div")
+			.data([0]).enter()
+			.append('div')
+			.attr('id', 'wordcloud');
+
+	var wordcloud_data = firstPart.filter(x => x[indexTerm] != null).map(x => {return {text: x[indexTerm], size: 30};});
+	console.log(wordcloud_data);
+
+
+	/*var term1 = svg.selectAll("text.term1")
 		        .data([0])
 		        .enter()
 		        .append("text")
@@ -139,7 +148,7 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 				.attr("text-anchor", "middle")
 			.on('mouseover', tip1.show)
 			.on('mouseout', tip1.hide);
-				
+			*/		
 
 	var img = svg.append("g").append("image")
 			.attr("class", "img1")
@@ -178,6 +187,14 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 			.attr("font-size", "10px")
 	        .attr("y", height - 20)
 			.attr("text-anchor", "middle");	
+
+
+
+        d3.wordcloud()
+		.selector('#wordcloud')
+		.words(wordcloud_data)
+		.start();
+
 };
 
 

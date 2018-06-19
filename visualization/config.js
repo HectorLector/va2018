@@ -1,6 +1,6 @@
 var visConfig = {
     // Add all of your libraries from the libs folder here. The visualizerChartApi entry should NOT be removed
-    libs : ["visualizerChartApi.js", "d3.v3.min.js", "jquery-3.3.1.min.js"],
+    libs : ["visualizerChartApi.js", "d3.v3.min.js", "jquery-3.3.1.min.js", "d3.layout.cloud.js", "d3.wordcloud.js"],
 
     // Add all your css files from your css folder here
     css : ["style.css"],
