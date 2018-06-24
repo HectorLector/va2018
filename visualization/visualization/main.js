@@ -48,6 +48,9 @@ applyFilter = function(filteredDatarows) {
 var xIndex = -1;
 var yIndex = -1;
 
+//Selection
+var lastSelected = null;
+
 // method for drawing the visualization
 // the visualization is hosted in an iframe, thus the visualization should be written directly to the body
 // @param datarows - an array with rows which should be displayed
@@ -128,6 +131,7 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
       	})
 	.on("click", function(d, i){
 		  $('#info-text').html(meta_data);
+          selectItem($(this));
 	});
 	
 	var wordcloud_data = [];
@@ -160,22 +164,41 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 		.attr("id", "info-text")
 		.attr("class", "footer")
 	        .attr("x", 10)
-		.attr("font-size", "20")
+		.attr("font-size", "12")
 	        .attr("y", height - 20);
 						
 
 	      d3.wordcloud()
 		.size([width, height/2])
 		.selector('#main-svg')
+        .spiral("rectangular")
 		.words(wordcloud_data)
-		.onwordclick(function(d, i) {  
-		  let msg = "Clicked: " + d.text + "number: " + i;
+		.onwordclick(function(d, i) {
+          let tf = firstPart.filter(x => x[indexTerm] == d.text).map(x => x[indexTf])[0];
+          let docs = firstPart.filter(x => x[indexTerm] == d.text).map(x => x[indexDoc]).join("; '");
+		  let msg = "Term: '" + d.text + "', tf: " + tf + ", documents: " + docs;
 		  $('#info-text').html(msg);
+          //hacky selection, because the d object is not what we need.
+          let item = $('#main-svg > svg text:contains("' + d.text + '")').first();
+          selectItem(item);
 		})
 		.start();
 };
 
+function selectItem(item){
 
+    if(lastSelected != null){
+        lastSelected.removeClass("selectedText");
+    }
+
+  if (item.hasClass("selectedText") == false) {
+    item.addClass("selectedText");
+    lastSelected = item;
+  } else {
+    item.removeClass("selectedText");  
+    lastSelected = null;  
+  }  
+}
 
 // This is the callback function passed to the brushingObserver. Every time a selection happens in
 // another visualization, this function gets called

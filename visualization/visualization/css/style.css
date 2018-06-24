@@ -41,3 +41,10 @@ svg text.label {
 #chartID {
     min-width: 531px;
 }
+
+.selectedText {
+  fill: blue;
+  font-weight: bold;
+}
+
+
