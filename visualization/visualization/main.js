@@ -127,8 +127,8 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	.on('mouseover', tip.show)
 	.on('mouseout', tip.hide);
 	
-	var cloud = svg.selectAll("div")
-			.data([0]).enter()
+	var cloud = svg.append("cloud")
+				.data([0]).enter()
 			.append('div')
 			.attr('id', 'wordcloud');
 
