@@ -87,32 +87,28 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 
 	let firstPart = docMap.values().next().value
 	//Get images from first document, filter null values (no image), order by size (max to min), select biggest size and get data
-	let image1 = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];})[0][indexImage];
+	let images = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];}).map(x => x[indexImage]).slice(0,2);
+	//Get most important (tf) words of document
+	let words = firstPart.filter(x => x[indexTerm] != null).sort(function(x,y){return y[indexTf] - x[indexTf];}).map(x => x[indexTerm]);
+	//Get meta data string of pdf doc
     	let meta_data = firstPart.filter(x => x[indexKey] != null).map(x => x[indexKey] + ":" + x[indexValue]).join(", ");
-	console.log(image1);
-    
+
+	console.log(words);
+
 	var svg = d3.select("body")
 			.append("svg")
+			.attr("id", "main-svg")
 			.attr("width", width)
 			.attr("height", height);
 			
-	var tip = d3.tip()
+	/*var tip = d3.tip()
 		.attr('class', 'd3-tip')
 	    	.direction('s')
 		.html(function(d) {
 		  return "<strong>INFO:</strong> <span style='color:red'>" + meta_data + "</span>";
 		});
 	
-	var tip1 = d3.tip()
-		.attr('class', 'd3-tip')
-		.offset([10, 0])
-		.direction('s')
-		.html(function(d) {
-		  return "<strong style='color:red'>Entalten in:</strong> <span >" + datarows[0][3] + "</span>";
-		});
-	
-	svg.call(tip);
-	svg.call(tip1);
+	svg.call(tip);*/
 		
     var title = svg.selectAll("text.title")
 	        .data([0])
@@ -124,78 +120,61 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 		.attr("font-size", "20px")
 	        .attr("y", 20)
 		.attr("text-anchor", "middle")
-	.on('mouseover', tip.show)
-	.on('mouseout', tip.hide);
+	.on('mouseover', function(d) {
+        	d3.select(this).style("cursor", "pointer"); 
+      	})
+	.on('mouseout', function(d) {
+        	d3.select(this).style("cursor", "default"); 
+      	})
+	.on("click", function(d, i){
+		  $('#info-text').html(meta_data);
+	});
 	
-	var cloud = svg.selectAll("div")
-			.data([0]).enter()
-			.append('div')
-			.attr('id', 'wordcloud');
-
-	var wordcloud_data = firstPart.filter(x => x[indexTerm] != null).map(x => {return {text: x[indexTerm], size: 30};});
+	var wordcloud_data = [];
+	for(let i = 0; i < words.length; i++){
+		wordcloud_data.push({"text": words[i], "size": 10});
+	}
 	console.log(wordcloud_data);
 
-
-	/*var term1 = svg.selectAll("text.term1")
-		        .data([0])
-		        .enter()
-		        .append("text")
-		        .text(datarows[0][indexTerm])
-				.attr("class", "term1")
-		        .attr("x", width/2)
-				.attr("font-size", "16px")
-		        .attr("y", 40)
-				.attr("text-anchor", "middle")
-			.on('mouseover', tip1.show)
-			.on('mouseout', tip1.hide);
-			*/		
-
-	var img = svg.append("g").append("image")
-			.attr("class", "img1")
-	        .attr("width", width / 4) 
-	        .attr("height", height / 4 ) 
-	        .attr("y", (height-40-(height/4)))
-	        .attr("x", 10)
-	        .attr("xlink:href", image1)
-				.on('mouseover', tip.show)
-   		 		.on('mouseout', tip.hide)
-				;
-			
 	var img1 = svg.append("g").append("image")
-			.attr("class", "img2")
-	        .attr("width", width / 4) 
-	        .attr("height", height / 4 ) 
-	        .attr("y", (height-40-(height/4)))
-	        .attr("x", ((width/2)-(width/8)))
-	        .attr("xlink:href", datarows[0][31]);
+		.attr("class", "img1")
+	        .attr("width", width / 2) 
+	        .attr("height", height / 3 ) 
+	        .attr("y", (2*height/3) - 50)
+	        .attr("x", 0)
+	        .attr("xlink:href", images[0]);
 			
 	var img2 = svg.append("g").append("image")
-			.attr("class", "img3")
-	        .attr("width", width / 4) 
-	        .attr("height", height / 4 ) 
-	        .attr("y", (height-40-(height/4)))
-	        .attr("x", (width-20-(width/4)))
-	        .attr("xlink:href", datarows[0][34]);
-							
+		.attr("class", "img2")
+	        .attr("width", width / 2) 
+	        .attr("height", height / 3 ) 
+	        .attr("y", (1*height/3) - 50)
+	        .attr("x", (width/2))
+	        .attr("xlink:href", images[1]);
+	
 	var footer = svg.selectAll("text.footer")
 	        .data([0])
 	        .enter()
 	        .append("text")
-	        .text("dms & dr 2018")
-			.attr("class", "footer")
-	        .attr("x", width/2)
-			.attr("font-size", "10px")
-	        .attr("y", height - 20)
-			.attr("text-anchor", "middle");	
+	        .text("Information: ")
+		.attr("id", "info-text")
+		.attr("class", "footer")
+	        .attr("x", 10)
+		.attr("font-size", "20")
+	        .attr("y", height - 20);
+						
 
-
-
-        d3.wordcloud()
-		.selector('#wordcloud')
+	      d3.wordcloud()
+		.size([width, height/2])
+		.selector('#main-svg')
 		.words(wordcloud_data)
+		.onwordclick(function(d, i) {  
+		  let msg = "Clicked: " + d.text + "number: " + i;
+		  $('#info-text').html(msg);
+		})
 		.start();
-
 };
+
 
 
 // This is the callback function passed to the brushingObserver. Every time a selection happens in
