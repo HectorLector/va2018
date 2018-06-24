@@ -43,7 +43,7 @@ svg text.label {
 }
 
 .selectedText {
-  fill: blue;
+  fill: red;
   font-weight: bold;
 }
 

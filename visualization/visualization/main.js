@@ -90,7 +90,8 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 
 	let firstPart = docMap.values().next().value
 	//Get images from first document, filter null values (no image), order by size (max to min), select biggest size and get data
-	let images = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];}).map(x => x[indexImage]).slice(0,2);
+    let images_base = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];})
+	let images = images_base.map(x => x[indexImage]).slice(0,2);
 	//Get most important (tf) words of document
 	let words = firstPart.filter(x => x[indexTerm] != null).sort(function(x,y){return y[indexTf] - x[indexTf];}).map(x => x[indexTerm]);
 	//Get meta data string of pdf doc
@@ -120,7 +121,7 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	        .text(documentName)
 		.attr("class", "title")
 	        .attr("x", width/2)
-		.attr("font-size", "20px")
+		.attr("font-size", "20")
 	        .attr("y", 20)
 		.attr("text-anchor", "middle")
 	.on('mouseover', function(d) {
@@ -133,6 +134,11 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 		  $('#info-text').html(meta_data);
           selectItem($(this));
 	});
+
+    //Trennlinien
+    d3.select("#main-svg").append("line").attr("x1", 10).attr("x2", width-10).attr("y1", 30).attr("y2", 30).attr("stroke", "black");
+    //d3.select("#main-svg").append("line").attr("x1", 10).attr("x2", width-10).attr("y1", 90 + height/3).attr("y2", 90 + height/3).attr("stroke", "black");
+    d3.select("#main-svg").append("line").attr("x1", 10).attr("x2", width-10).attr("y1", height-35).attr("y2", height-35).attr("stroke", "black");
 	
 	var wordcloud_data = [];
 	for(let i = 0; i < words.length; i++){
@@ -146,7 +152,11 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	        .attr("height", height / 3 ) 
 	        .attr("y", (2*height/3) - 50)
 	        .attr("x", 0)
-	        .attr("xlink:href", images[0]);
+	        .attr("xlink:href", images[0])
+        .on("click", function(d, i){
+            printImageInfo(i, images_base, indexPage, indexImageSize);  
+            selectItem($(this));
+	    });
 			
 	var img2 = svg.append("g").append("image")
 		.attr("class", "img2")
@@ -154,18 +164,23 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	        .attr("height", height / 3 ) 
 	        .attr("y", (1*height/3) - 50)
 	        .attr("x", (width/2))
-	        .attr("xlink:href", images[1]);
+	        .attr("xlink:href", images[1])
+        .on("click", function(d, i){
+            printImageInfo(i, images_base, indexPage, indexImageSize);  
+            selectItem($(this));
+	    });
 	
 	var footer = svg.selectAll("text.footer")
 	        .data([0])
 	        .enter()
 	        .append("text")
 	        .text("Information: ")
-		.attr("id", "info-text")
-		.attr("class", "footer")
+		    .attr("id", "info-text")
+		    .attr("class", "footer")
 	        .attr("x", 10)
-		.attr("font-size", "12")
-	        .attr("y", height - 20);
+		    .attr("font-size", "12")
+	        .attr("y", height - 15)
+            .append("tspan").append("tspan");
 						
 
 	      d3.wordcloud()
@@ -183,7 +198,16 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
           selectItem(item);
 		})
 		.start();
+
+        $('#main-svg > svg').first().attr("y", 30);
 };
+
+function printImageInfo(index, images_base, indexPage, indexImageSize){
+  console.log("Image number: " + index);
+  let page = images_base.map(x => x[indexPage])[index];
+  let fileSize = images_base.map(x => x[indexImageSize])[index];
+  $('#info-text').html("Image from page: " + page +", size: " + (fileSize/1024).toFixed(0) + " kB");
+}
 
 function selectItem(item){
 
