@@ -144,7 +144,6 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 	for(let i = 0; i < words.length; i++){
 		wordcloud_data.push({"text": words[i], "size": 10});
 	}
-	console.log(wordcloud_data);
 
 	var img1 = svg.append("g").append("image")
 		.attr("class", "img1")
