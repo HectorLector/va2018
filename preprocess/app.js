@@ -82,6 +82,10 @@ for(let i = 0; i < words.length; i++){
 	});
 }
 
+let treshhold_tfidf = rows.filter(x => x[2] != null).sort(function(x,y) { return y[4] - x[4];}).slice(0,100).slice(-1)[0][4];
+console.log("Top 100 rows TfIDF treshhold: " +treshhold_tfidf);
+
+rows = rows.filter(x => (x[4] != null && x[4] > treshhold_tfidf) || x[4] == null);
 
 var csvHeader = createCsvHeader();
 var csvRows = createCsvContent(rows);
@@ -163,6 +167,7 @@ function createCsvRows(tfs, images, originalFileName, meta_data){
 	let fileName = originalFileName;
 	let rows = [];
 	//build lines for words
+
 	for(let i = 0; i < tfs.length; i++){
 		let entry = tfs[i];
 		//console.log(entry.word + " : " + entry.tf);
@@ -181,7 +186,7 @@ function createCsvRows(tfs, images, originalFileName, meta_data){
 	//build lines for images
 	for(let i = 0; i < imagesFiltered.length; i++){
 		let img = images[i];
-		//rows.push([fileName, img.page, null, null, null, img.data, null, img.file_size, null, null]);
+		rows.push([fileName, img.page, null, null, null, img.data, null, img.file_size, null, null]);
 	}
 
     //This is a hack for visualizer, otherwise it does not recognize column data type
