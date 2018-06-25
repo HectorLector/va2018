@@ -13,3 +13,17 @@ iframe {
 #size-container input {
     width: 50px;
 }
+
+#dropdown {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+#main-svg{
+	position: relative;
+}
+
+#wordcloud{
+	fill: transparent;
+}
