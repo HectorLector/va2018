@@ -87,13 +87,13 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 };
 
 function drawDocumentCard(datarows, channelMappings, docIndex){
-	
+	console.log(datarows);
     var margin = {top:10, right:10, bottom:90, left:10};
     var width = document.body.offsetWidth;
     var height = document.body.offsetHeight-20;
     var contentHeight = height - 65;
 	
-	let indexTerm = channelMappings.findIndex(elem => (elem.channel === "term"));
+	/*let indexTerm = channelMappings.findIndex(elem => (elem.channel === "term"));
 	let indexDoc = docIndex;
 	let indexPage = channelMappings.findIndex(elem => (elem.channel === "page"));
 	let indexImage = channelMappings.findIndex(elem => (elem.channel === "image"));
@@ -102,6 +102,17 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
 	let indexImageSize = channelMappings.findIndex(elem => (elem.channel === "image_size"));
 	let indexKey = channelMappings.findIndex(elem => (elem.channel === "info_key"));
 	let indexValue = channelMappings.findIndex(elem => (elem.channel === "info_value"));
+	let documentName = datarows[0][indexDoc];*/
+	
+	let indexTerm = 1;
+	let indexDoc = docIndex;
+	let indexPage = 5;
+	let indexImage = 2;
+	let indexTf = 6;
+	let indexTfidf = 7;
+	let indexImageSize = 8;
+	let indexKey = 3;
+	let indexValue = 4;
 	let documentName = datarows[0][indexDoc];
 		
 	//Extract
@@ -112,8 +123,8 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
 	let firstPart = docMap.values().next().value
 	//Get images from first document, filter null values (no image), order by size (max to min), select biggest size and get data
     let images_base = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];}).filter(String)
-	let images = images_base.map(x => x[indexImage]).slice(0,2);
-	//var images =  firstPart.filter(x=> x[indexImage]).filter(String).map(y=> y[indexImage]);
+	//let images = images_base.map(x => x[indexImage]).slice(0,2);
+	var images =  firstPart.filter(x=> x[indexImage]).filter(String).map(y=> y[indexImage]);
 	console.log("IMAGES_____________");
 	console.log( images)
 	//Get most important (tf) words of document
