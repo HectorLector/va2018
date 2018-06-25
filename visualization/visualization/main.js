@@ -167,7 +167,7 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
 	        .attr("x", 0)
 	        .attr("xlink:href", images[0])
         .on("click", function(d, i){
-            printImageInfo(i, images_base, indexPage, indexImageSize);  
+            printImageInfo(0, images_base, indexPage, indexImageSize);  
             selectItem($(this));
 	    });
 			
@@ -179,7 +179,7 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
 			.attr("x", width * .5)
 	        .attr("xlink:href", images[1])
         .on("click", function(d, i){
-            printImageInfo(i, images_base, indexPage, indexImageSize);  
+            printImageInfo(1, images_base, indexPage, indexImageSize);  
             selectItem($(this));
 	    });
 	
