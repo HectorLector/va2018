@@ -174,8 +174,12 @@ function createCsvRows(tfs, images, originalFileName, meta_data){
 		//console.log(entry.word + " : " + entry.tf);
 		rows.push([fileName, null, null, null, null, null, null, null, entry.key, entry.value]);
 	}
+
+    //Add only 2 images, to reduce file size, because we only show 2 images in visualization
+    let imagesFiltered = images.sort(function(x,y){return y.file_size - x.file_size;}).slice(0,2);
+
 	//build lines for images
-	for(let i = 0; i < images.length; i++){
+	for(let i = 0; i < imagesFiltered.length; i++){
 		let img = images[i];
 		rows.push([fileName, img.page, null, null, null, img.data, null, img.file_size, null, null]);
 	}

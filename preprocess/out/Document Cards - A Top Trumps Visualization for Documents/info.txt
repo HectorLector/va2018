@@ -1,0 +1,17 @@
+Title:          template.dvi
+Creator:        dvips(k) 5.97 Copyright 2008 Radical Eye Software
+Producer:       GPL Ghostscript 8.63
+CreationDate:   Mon Jul 27 09:39:20 2009
+ModDate:        Mon Jul 27 09:39:20 2009
+Tagged:         no
+UserProperties: no
+Suspects:       no
+Form:           none
+JavaScript:     no
+Pages:          8
+Encrypted:      no
+Page size:      612 x 792 pts (letter)
+Page rot:       0
+File size:      5013217 bytes
+Optimized:      no
+PDF version:    1.3
