@@ -139,7 +139,7 @@ function base64_encode(file) {
     // read binary data
     let bitmap = fs.readFileSync(file);
     // convert binary data to base64 encoded string
-    return "data:image/png;base64," + new Buffer(bitmap).toString('base64');
+    return new Buffer(bitmap).toString('base64');
 }
 
 //Returns an array ofobjects {term, tf} with unique words as term and their count as tf.

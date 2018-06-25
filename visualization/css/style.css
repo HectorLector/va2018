@@ -5,6 +5,10 @@ iframe {
     border: 1px solid grey;
 }
 
+body{
+  background-color:lightblue;
+}
+
 #size-container {
     margin-left: 10px;
     display: inline-block;
