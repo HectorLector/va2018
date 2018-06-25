@@ -16,7 +16,7 @@ var INFOFILE = "info.txt";
 var natural = require('natural');
 var outFile = "visualizer.csv";
 var csvSep = ";";
-var lineSep = "\r\n";
+var lineSep = "\n";
 
 var fileNames = [];
 var tfs = [];
@@ -154,8 +154,8 @@ function getTfWordCount(words){
 }
 
 function createCsvHeader(){
-	let headerArray = ["document", "page", "term", "tf", "tfidf", "image", "image_size", "key", "value"];
-	let csvHeader = headerArray.join(csvSep) + lineSep;
+	let headerArray = ["document", "page", "term", "tf", "tfidf", "image", "image_size", "info_key", "info_value"];
+	let csvHeader = headerArray.join(csvSep) + csvSep + lineSep;
 	return csvHeader;
 }
 
@@ -181,8 +181,16 @@ function createCsvRows(tfs, images, originalFileName, meta_data){
 	//build lines for images
 	for(let i = 0; i < imagesFiltered.length; i++){
 		let img = images[i];
-		rows.push([fileName, img.page, null, null, null, img.data, null, img.file_size, null, null]);
+		//rows.push([fileName, img.page, null, null, null, img.data, null, img.file_size, null, null]);
 	}
+
+    //This is a hack for visualizer, otherwise it does not recognize column data type
+    rows[0][1] = 0;
+    rows[0][5] = 'xxx';
+    rows[0][6] = 42;
+    rows[0][7] = "file";
+    rows[0][8] = fileName;
+
 	return rows;
 }
 
