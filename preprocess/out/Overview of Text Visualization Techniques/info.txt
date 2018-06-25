@@ -1,0 +1,15 @@
+Producer:       iText 4.2.0 by 1T3XT
+CreationDate:   Tue Mar 21 09:53:46 2017
+ModDate:        Tue Mar 21 09:53:46 2017
+Tagged:         no
+UserProperties: no
+Suspects:       no
+Form:           none
+JavaScript:     no
+Pages:          31
+Encrypted:      no
+Page size:      439.37 x 666.142 pts
+Page rot:       0
+File size:      2351483 bytes
+Optimized:      no
+PDF version:    1.4

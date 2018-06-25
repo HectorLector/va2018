@@ -1,0 +1,20 @@
+Title:          
+Subject:        
+Keywords:       
+Author:         
+Creator:        LaTeX with hyperref package + hypdvips
+Producer:       Acrobat Distiller 9.4.5 (Windows)
+CreationDate:   Wed Dec  4 16:55:57 2013
+ModDate:        Wed Dec  4 16:58:24 2013
+Tagged:         no
+UserProperties: no
+Suspects:       no
+Form:           none
+JavaScript:     no
+Pages:          30
+Encrypted:      no
+Page size:      439.36 x 666.15 pts
+Page rot:       0
+File size:      1134707 bytes
+Optimized:      yes
+PDF version:    1.4

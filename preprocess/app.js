@@ -159,7 +159,7 @@ function getTfWordCount(words){
 
 function createCsvHeader(){
 	let headerArray = ["document", "page", "term", "tf", "tfidf", "image", "image_size", "info_key", "info_value"];
-	let csvHeader = headerArray.join(csvSep) + csvSep + lineSep;
+	let csvHeader = headerArray.join(csvSep) +lineSep; 
 	return csvHeader;
 }
 
@@ -171,13 +171,13 @@ function createCsvRows(tfs, images, originalFileName, meta_data){
 	for(let i = 0; i < tfs.length; i++){
 		let entry = tfs[i];
 		//console.log(entry.word + " : " + entry.tf);
-		rows.push([fileName, null, entry.term, entry.tf, null, null, null, null, null, null]);
+		rows.push([fileName, null, entry.term, entry.tf, null, null, null, null, null]);
 	}
 	//build lines for meta information
 	for(let i = 0; i < meta_data.length; i++){
 		let entry = meta_data[i];
 		//console.log(entry.word + " : " + entry.tf);
-		rows.push([fileName, null, null, null, null, null, null, null, entry.key, entry.value]);
+		rows.push([fileName, null, null, null, null, null, null, entry.key, entry.value]);
 	}
 
     //Add only 2 images, to reduce file size, because we only show 2 images in visualization
@@ -186,7 +186,7 @@ function createCsvRows(tfs, images, originalFileName, meta_data){
 	//build lines for images
 	for(let i = 0; i < imagesFiltered.length; i++){
 		let img = images[i];
-		rows.push([fileName, img.page, null, null, null, img.data, null, img.file_size, null, null]);
+		rows.push([fileName, img.page, null, null, null, img.data, img.file_size, null, null]);
 	}
 
     //This is a hack for visualizer, otherwise it does not recognize column data type
