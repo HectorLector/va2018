@@ -93,8 +93,8 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
     var height = document.body.offsetHeight-20;
     var contentHeight = height - 65;
 	
-	/*let indexTerm = channelMappings.findIndex(elem => (elem.channel === "term"));
-	let indexDoc = docIndex;
+	let indexTerm = channelMappings.findIndex(elem => (elem.channel === "term"));
+	let indexDoc = channelMappings.findIndex(elem => (elem.channel === "document"))
 	let indexPage = channelMappings.findIndex(elem => (elem.channel === "page"));
 	let indexImage = channelMappings.findIndex(elem => (elem.channel === "image"));
 	let indexTf = channelMappings.findIndex(elem => (elem.channel === "tf"));
@@ -102,9 +102,11 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
 	let indexImageSize = channelMappings.findIndex(elem => (elem.channel === "image_size"));
 	let indexKey = channelMappings.findIndex(elem => (elem.channel === "info_key"));
 	let indexValue = channelMappings.findIndex(elem => (elem.channel === "info_value"));
-	let documentName = datarows[0][indexDoc];*/
+	let documentName = datarows[0][indexDoc];
 	
-	let indexTerm = 1;
+    var documents = Array.from(new Set(datarows.map(x => x[indexDoc])));
+
+	/*let indexTerm = 1;
 	let indexDoc = docIndex;
 	let indexPage = 5;
 	let indexImage = 2;
@@ -113,14 +115,17 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
 	let indexImageSize = 8;
 	let indexKey = 3;
 	let indexValue = 4;
-	let documentName = datarows[0][indexDoc];
+	let documentName = datarows[0][indexDoc];*/
 		
 	//Extract
 	const docMap = datarows.reduce(
 	    (entryMap, e) => entryMap.set(e[indexDoc], [...entryMap.get(e[indexDoc])||[], e]),
 	    new Map()
 	);
-	let firstPart = docMap.values().next().value
+
+    let firstPart = docMap.get(documents[docIndex]);
+    console.log("Current Part: " + firstPart);
+	
 	//Get images from first document, filter null values (no image), order by size (max to min), select biggest size and get data
     let images_base = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];}).filter(String)
 	//let images = images_base.map(x => x[indexImage]).slice(0,2);
