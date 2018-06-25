@@ -93,8 +93,6 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
     var height = document.body.offsetHeight-20;
     var contentHeight = height - 65;
 	
-	console.log(channelMappings);
-	
 	let indexTerm = channelMappings.findIndex(elem => (elem.channel === "term"));
 	let indexDoc = docIndex;
 	let indexPage = channelMappings.findIndex(elem => (elem.channel === "page"));
@@ -105,31 +103,25 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
 	let indexKey = channelMappings.findIndex(elem => (elem.channel === "info_key"));
 	let indexValue = channelMappings.findIndex(elem => (elem.channel === "info_value"));
 	let documentName = datarows[0][indexDoc];
-	
-	console.log("image index =" + indexImage);
-	console.log("word index =" + indexTerm);
-	
+		
 	//Extract
 	const docMap = datarows.reduce(
 	    (entryMap, e) => entryMap.set(e[indexDoc], [...entryMap.get(e[indexDoc])||[], e]),
 	    new Map()
 	);
-	console.log(docMap)
 	let firstPart = docMap.values().next().value
 	//Get images from first document, filter null values (no image), order by size (max to min), select biggest size and get data
-    //let images_base = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];}).filter(String)
-	//let images = images_base.map(x => x[indexImage]).slice(0,2);
-	console.log(firstPart)
-	var images =  firstPart.filter(x=> x[indexImage]).filter(String).map(y=> y[indexImage]);
-	
-	console.log(images);
-	
+    let images_base = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];}).filter(String)
+	let images = images_base.map(x => x[indexImage]).slice(0,2);
+	//var images =  firstPart.filter(x=> x[indexImage]).filter(String).map(y=> y[indexImage]);
+	console.log("IMAGES_____________");
+	console.log( images)
 	//Get most important (tf) words of document
 	let words = firstPart.filter(x => x[indexTerm] != null).sort(function(x,y){return y[indexTf] - x[indexTf];}).map(x => x[indexTerm]).filter(String)
 	//Get meta data string of pdf doc
     let meta_data = firstPart.filter(x => x[indexKey] != null).map(x => x[indexKey] + ":" + x[indexValue]).join(", ");
 
-	console.log("Word COUNT = " + words.length);
+	console.log("WORDS______________");
 	console.log(words);
     
 	
