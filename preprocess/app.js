@@ -82,9 +82,9 @@ for(let i = 0; i < words.length; i++){
 	});
 }
 
+//Filter rows, only show top 100 terms
 let treshhold_tfidf = rows.filter(x => x[2] != null).sort(function(x,y) { return y[4] - x[4];}).slice(0,100).slice(-1)[0][4];
 console.log("Top 100 rows TfIDF treshhold: " +treshhold_tfidf);
-
 rows = rows.filter(x => (x[4] != null && x[4] > treshhold_tfidf) || x[4] == null);
 
 var csvHeader = createCsvHeader();
@@ -139,7 +139,7 @@ function base64_encode(file) {
     // read binary data
     let bitmap = fs.readFileSync(file);
     // convert binary data to base64 encoded string
-    return new Buffer(bitmap).toString('base64');
+    return "data:image/png;base64," + new Buffer(bitmap).toString('base64');
 }
 
 //Returns an array ofobjects {term, tf} with unique words as term and their count as tf.
