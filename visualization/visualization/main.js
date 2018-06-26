@@ -130,6 +130,9 @@ function drawDocumentCard(datarows, channelMappings, docIndex, docName){
     let images_base = firstPart.filter(x => x[indexImage] != null).sort(function(x,y){return y[indexImageSize] - x[indexImageSize];}).filter(String)
 	//let images = images_base.map(x => x[indexImage]).slice(0,2);
 	var images =  firstPart.filter(x=> x[indexImage]).filter(String).map(y=> y[indexImage]);
+	if(images[0] == "xxx")
+		images.shift();
+	
 	console.log("IMAGES_____________");
 	console.log( images)
 	//Get most important (tf) words of document
@@ -137,8 +140,6 @@ function drawDocumentCard(datarows, channelMappings, docIndex, docName){
 	//Get meta data string of pdf doc
     let meta_data = firstPart.filter(x => x[indexKey] != null).map(x => x[indexKey] + ":" + x[indexValue]).join(", ");
 
-	console.log("WORDS______________");
-	console.log(words);
     
 	
 	
