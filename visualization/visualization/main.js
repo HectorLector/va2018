@@ -79,14 +79,14 @@ drawVisualization = function (datarows, channelMappings, visIndex) {
 		
 		selectValue = d3.select('select').property('value');
 		d3.select("body").select("svg").remove();
-	    drawDocumentCard(datarows, channelMappings, documents.indexOf(selectValue));
+	    drawDocumentCard(datarows, channelMappings, documents.indexOf(selectValue), selectValue);
 		
 	};
 	
-    drawDocumentCard(datarows, channelMappings, 0);
+    drawDocumentCard(datarows, channelMappings, 0, documents[0]);
 };
 
-function drawDocumentCard(datarows, channelMappings, docIndex){
+function drawDocumentCard(datarows, channelMappings, docIndex, docName){
 	console.log(datarows);
     var margin = {top:10, right:10, bottom:90, left:10};
     var width = document.body.offsetWidth;
@@ -102,7 +102,7 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
 	let indexImageSize = channelMappings.findIndex(elem => (elem.channel === "image_size"));
 	let indexKey = channelMappings.findIndex(elem => (elem.channel === "info_key"));
 	let indexValue = channelMappings.findIndex(elem => (elem.channel === "info_value"));
-	let documentName = datarows[0][indexDoc];
+	let documentName = docName;
 	
     var documents = Array.from(new Set(datarows.map(x => x[indexDoc])));
 
@@ -213,7 +213,7 @@ function drawDocumentCard(datarows, channelMappings, docIndex){
 			
 	var wordcloud_data = [];
 	for(let i = 0; i < words.length; i++){
-		wordcloud_data.push({"text": words[i], "size": 10});
+		wordcloud_data.push({"text": words[i], "size": firstPart.filter(x => x[indexTerm] == words[i]).map(x => x[indexTf])[0]});
 	}					
 	
 	svg.append("g")
