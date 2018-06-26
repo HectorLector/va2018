@@ -138,7 +138,7 @@ function drawDocumentCard(datarows, channelMappings, docIndex, docName){
 	//Get most important (tf) words of document
 	let words = firstPart.filter(x => x[indexTerm] != null).sort(function(x,y){return y[indexTf] - x[indexTf];}).map(x => x[indexTerm]).filter(String)
 	//Get meta data string of pdf doc
-    let meta_data = firstPart.filter(x => x[indexKey] != null).map(x => x[indexKey] + ":" + x[indexValue]).join(", ");
+    let meta_data = firstPart.filter(x => x[indexKey] != null).filter(String).map(x => x[indexKey] + ":" + x[indexValue]).join(",");
 
     
 	
